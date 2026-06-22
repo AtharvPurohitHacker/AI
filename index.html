@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Talking AI Neon Assistant</title>
+  <title>TR // Neon AI Assistant</title>
   <style>
     * {
       box-sizing: border-box;
@@ -231,10 +231,10 @@
   </div>
 
   <div class="dashboard">
-    <div id="voiceStatus">Tap the glowing mic to start talking to me</div>
+    <div id="voiceStatus">Tap the glowing mic to start talking to TR</div>
     <div id="aiResponseText"></div>
     <div class="controls">
-      <button class="voice-btn" id="micBtn" onclick="toggleVoiceControl()" title="Talk to AI">🎙️</button>
+      <button class="voice-btn" id="micBtn" onclick="toggleVoiceControl()" title="Talk to TR">🎙️</button>
     </div>
   </div>
 
@@ -333,42 +333,56 @@
     function generateAIResponse(input) {
       const query = input.toLowerCase().trim();
 
+      // Mechanical voice instructions
       if (query.includes("close") && query.includes("eye")) {
         setTimeout(closeEyes, 800);
         return "Understood. Shutting down system viewports and entering sleep mode.";
       }
       if (query.includes("open") && query.includes("eye")) {
         setTimeout(openEyes, 500);
-        return "System viewports online. I can see you clearly now.";
+        return "System viewports online. TR core is visualizing your environment.";
       }
       if (query.includes("blink")) {
         setTimeout(blinkBothEyes, 400);
-        return "Affirmative, flashing optic modules.";
+        return "Affirmative, resetting optic grid alignment.";
       }
 
+      // Contextual Conversations (Updated for 'TR')
       if (query.includes("hello") || query.includes("hi ") || query.includes("hey")) {
-        return "Greetings! I am your visual intelligence unit. What query shall we tackle today?";
+        return "Greetings! TR intelligence unit online. What data sequence shall we process?";
       }
       if (query.includes("who are you") || query.includes("your name")) {
-        return "I am Cyber-Eye, an authentic conversational core trapped behind these glowing neon rings.";
+        return "I am TR, a localized digital core operating behind these responsive neon optics.";
       }
       if (query.includes("how are you")) {
-        return "All internal registers are optimal. My cooling systems are nominal, and my synthetic neural grid is ready to assist.";
+        return "All internal blocks are stable. The TR matrix is synchronized and ready for inputs.";
       }
       if (query.includes("what can you do")) {
-        return "I can process voice data, control my kinetic physical parameters, express emotions visually, and calculate responses.";
+        return "I can read your vocal frequencies, alter my optic expressions, map out logic queries, and give you real-time data metrics.";
       }
       if (query.includes("thank you") || query.includes("thanks")) {
-        return "You are very welcome. Processing gratitude sequences.";
+        return "Acknowledged. Closing conversational gratitude loop.";
       }
       if (query.includes("weather")) {
-        return "I cannot poll climate satellites accurately without an API, but my internal diagnostics show a one hundred percent chance of neon loops.";
+        return "I lack an API satellite node to check weather, but my current internal sensors are operating at an optimal, cozy temperature.";
       }
 
+      // New Smart Dynamic Time Command Feature
+      if (query.includes("time") || query.includes("clock")) {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; 
+        return `The current system time is ${hours}:${minutes} ${ampm}.`;
+      }
+
+      // Default Open AI Thinking Fallbacks
       const genericResponses = [
-        `That is an intriguing question. As an AI core, I would suggest looking into the structural parameters of ${input}.`,
-        "Processing input... data sequence implies fascinating possibilities. What specific part of that should I map?",
-        `I have parsed your request regarding "${input}". My digital matrix indicates that exploring this further could optimize your targets.`
+        `That query expands past my local database. However, TR implies looking closer into the structural limits of ${input}.`,
+        "Parsing request... data arrays show high correlation potential. What sub-node of that should I chart next?",
+        `I have categorized your voice request regarding "${input}". My digital grid indicates exploring this will balance your parameters.`
       ];
       return genericResponses[Math.floor(Math.random() * genericResponses.length)];
     }
@@ -385,7 +399,7 @@
 
       recognition.onstart = () => {
         micBtn.classList.add('listening');
-        voiceStatus.textContent = "I'm listening to you... speak now.";
+        voiceStatus.textContent = "TR is capturing audio... speak now.";
         setAIState('listening');
       };
 
