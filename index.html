@@ -20,10 +20,10 @@
       align-items: center;
       overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 40px 20px;
+      padding: 20px 20px 50px 20px; /* Reduced top padding, kept bottom padding */
     }
 
-    /* Container for the neon eyes */
+    /* Container for the neon eyes - Pushed up slightly */
     .eyes-container {
       flex: 1;
       display: flex;
@@ -31,6 +31,7 @@
       align-items: center;
       gap: 60px;
       width: 100%;
+      margin-top: -30px; /* Pulls the eyes higher up on the screen */
     }
 
     /* Base Layer: Standard State (Blue) */
@@ -148,6 +149,7 @@
       width: 100%;
       max-width: 500px;
       z-index: 10;
+      margin-bottom: 10px; /* Kept tight to the viewport bottom */
     }
 
     #voiceStatus {
@@ -347,7 +349,7 @@
         return "Affirmative, resetting optic grid alignment.";
       }
 
-      // Contextual Conversations (Updated for 'TR')
+      // Contextual Conversations
       if (query.includes("hello") || query.includes("hi ") || query.includes("hey")) {
         return "Greetings! TR intelligence unit online. What data sequence shall we process?";
       }
@@ -367,7 +369,7 @@
         return "I lack an API satellite node to check weather, but my current internal sensors are operating at an optimal, cozy temperature.";
       }
 
-      // New Smart Dynamic Time Command Feature
+      // Dynamic Time Command Feature
       if (query.includes("time") || query.includes("clock")) {
         const now = new Date();
         let hours = now.getHours();
