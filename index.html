@@ -256,7 +256,7 @@
 
     // Initialize client. 
     // ⚠️ REPLACE THE STRIPPED PLACEHOLDER WITH A NEW, SECURE API KEY FROM GOOGLE STUDIO.
-    const ai = new GoogleGenAI({ apiKey: "Ab8RN6IAJTNfntIJdEVghsqiDKq9nIHjncEBtkF4Pv_GevNgTg" });
+    const ai = new GoogleGenAI({ apiKey: "AQ.Ab8RN6IAJTNfntIJdEVghsqiDKq9nIHjncEBtkF4Pv_GevNgTg" });
 
     const leftEye = document.getElementById('leftEye');
     const rightEye = document.getElementById('rightEye');
@@ -406,7 +406,7 @@
 
       recognition.onstart = () => {
         micBtn.classList.add('listening');
-        voiceStatus.textContent = "Im listening YOu.";
+        voiceStatus.textContent = "Say Now.";
         setAIState('listening');
       };
 
@@ -416,7 +416,7 @@
           voiceStatus.textContent = "Voice OFF.";
           clearAllStates();
         } else if (!window.speechSynthesis.speaking) {
-          voiceStatus.textContent = "Thinking";
+          voiceStatus.textContent = "Thinking...";
           clearAllStates();
         }
       };
