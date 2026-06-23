@@ -20,10 +20,10 @@
       align-items: center;
       overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 20px 20px 50px 20px; /* Reduced top padding, kept bottom padding */
+      padding: 20px 20px 50px 20px;
     }
 
-    /* Container for the neon eyes - Pushed up slightly */
+    /* Container for the neon eyes */
     .eyes-container {
       flex: 1;
       display: flex;
@@ -31,7 +31,7 @@
       align-items: center;
       gap: 60px;
       width: 100%;
-      margin-top: -30px; /* Pulls the eyes higher up on the screen */
+      margin-top: -30px;
     }
 
     /* Base Layer: Standard State (Blue) */
@@ -149,7 +149,7 @@
       width: 100%;
       max-width: 500px;
       z-index: 10;
-      margin-bottom: 10px; /* Kept tight to the viewport bottom */
+      margin-bottom: 10px;
     }
 
     #voiceStatus {
@@ -211,6 +211,15 @@
       box-shadow: 0 0 30px #00f2ff;
     }
   </style>
+
+  <!-- Import map for Google's ESM Gen AI library -->
+  <script type="importmap">
+    {
+      "imports": {
+        "@google/genai": "https://esm.run/@google/genai"
+      }
+    }
+  </script>
 </head>
 <body>
 
@@ -236,11 +245,19 @@
     <div id="voiceStatus">Tap the glowing mic to start talking to TR</div>
     <div id="aiResponseText"></div>
     <div class="controls">
+      <!-- Added explicit call to setup global click events -->
       <button class="voice-btn" id="micBtn" onclick="toggleVoiceControl()" title="Talk to TR">🎙️</button>
     </div>
   </div>
 
-  <script>
+  <!-- Note the type="module" to allow ES6 library imports -->
+  <script type="module">
+    import { GoogleGenAI } from '@google/genai';
+
+    // Initialize client. 
+    // ⚠️ REPLACE THE STRIPPED PLACEHOLDER WITH A NEW, SECURE API KEY FROM GOOGLE STUDIO.
+    const ai = new GoogleGenAI({ apiKey: "Ab8RN6IAJTNfntIJdEVghsqiDKq9nIHjncEBtkF4Pv_GevNgTg" });
+
     const leftEye = document.getElementById('leftEye');
     const rightEye = document.getElementById('rightEye');
     const micBtn = document.getElementById('micBtn');
@@ -249,6 +266,9 @@
 
     let isListeningModeExplicit = false; 
     let naturalBlinkTimer = null;
+
+    // Window global hookups for the HTML inline onclick handler
+    window.toggleVoiceControl = toggleVoiceControl;
 
     // --- State Handlers ---
     function clearAllStates() {
@@ -324,69 +344,54 @@
         if (isListeningModeExplicit && recognition) {
           try { recognition.start(); } catch(e){}
         } else if (!isListeningModeExplicit) {
-          voiceStatus.textContent = "Voice engine offline.";
+          voiceStatus.textContent = "Voice OFF.";
         }
       };
 
       window.speechSynthesis.speak(utterance);
     }
 
-    // --- Brain Engine (Answers Logic) ---
-    function generateAIResponse(input) {
-      const query = input.toLowerCase().trim();
+    // --- New Cloud Brain Engine (Gemini 1.5 Flash Connected) ---
+    async function fetchGeminiResponse(userInput) {
+      setAIState('thinking');
+      voiceStatus.textContent = "TR is consulting the cloud matrix...";
 
-      // Mechanical voice instructions
+      // Quick offline keyword checks for hardware animations before passing to API
+      const query = userInput.toLowerCase().trim();
       if (query.includes("close") && query.includes("eye")) {
         setTimeout(closeEyes, 800);
-        return "Understood. Shutting down system viewports and entering sleep mode.";
+        aiSpeak("Understood. Shutting down system viewports and entering sleep mode.");
+        return;
       }
       if (query.includes("open") && query.includes("eye")) {
         setTimeout(openEyes, 500);
-        return "System viewports online. TR core is visualizing your environment.";
+        aiSpeak("System viewports online. TR core is visualizing your environment.");
+        return;
       }
       if (query.includes("blink")) {
         setTimeout(blinkBothEyes, 400);
-        return "Affirmative, resetting optic grid alignment.";
+        aiSpeak("Affirmative, resetting optic grid alignment.");
+        return;
       }
 
-      // Contextual Conversations
-      if (query.includes("hello") || query.includes("hi ") || query.includes("hey")) {
-        return "Greetings! TR intelligence unit online. What data sequence shall we process?";
-      }
-      if (query.includes("who are you") || query.includes("your name")) {
-        return "I am TR, a localized digital core operating behind these responsive neon optics.";
-      }
-      if (query.includes("how are you")) {
-        return "All internal blocks are stable. The TR matrix is synchronized and ready for inputs.";
-      }
-      if (query.includes("what can you do")) {
-        return "I can read your vocal frequencies, alter my optic expressions, map out logic queries, and give you real-time data metrics.";
-      }
-      if (query.includes("thank you") || query.includes("thanks")) {
-        return "Acknowledged. Closing conversational gratitude loop.";
-      }
-      if (query.includes("weather")) {
-        return "I lack an API satellite node to check weather, but my current internal sensors are operating at an optimal, cozy temperature.";
-      }
+      // If it's a structural conversation query, fetch from Gemini Cloud
+      try {
+        const response = await ai.models.generateContent({
+          model: 'gemini-1.5-flash',
+          contents: userInput,
+          config: {
+            systemInstruction: "You are TR, a brilliant, friendly digital AI assistant operating behind a glowing neon optic grid. Keep your responses short, natural, and punchy (1-2 sentences maximum) so they sound great when read aloud.",
+            temperature: 0.7,
+          }
+        });
 
-      // Dynamic Time Command Feature
-      if (query.includes("time") || query.includes("clock")) {
-        const now = new Date();
-        let hours = now.getHours();
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12; 
-        return `The current system time is ${hours}:${minutes} ${ampm}.`;
-      }
+        aiSpeak(response.text);
 
-      // Default Open AI Thinking Fallbacks
-      const genericResponses = [
-        `That query expands past my local database. However, TR implies looking closer into the structural limits of ${input}.`,
-        "Parsing request... data arrays show high correlation potential. What sub-node of that should I chart next?",
-        `I have categorized your voice request regarding "${input}". My digital grid indicates exploring this will balance your parameters.`
-      ];
-      return genericResponses[Math.floor(Math.random() * genericResponses.length)];
+      } catch (error) {
+        console.error("Gemini API Error:", error);
+        aiSpeak("Connection to my cloud brain was disrupted. Please check my API key configuration.");
+        clearAllStates();
+      }
     }
 
     // --- Voice Recognition Engine ---
@@ -401,17 +406,17 @@
 
       recognition.onstart = () => {
         micBtn.classList.add('listening');
-        voiceStatus.textContent = "TR is capturing audio... speak now.";
+        voiceStatus.textContent = "Im listening YOu.";
         setAIState('listening');
       };
 
       recognition.onend = () => {
         if (!isListeningModeExplicit) {
           micBtn.classList.remove('listening');
-          voiceStatus.textContent = "Voice engine offline.";
+          voiceStatus.textContent = "Voice OFF.";
           clearAllStates();
         } else if (!window.speechSynthesis.speaking) {
-          voiceStatus.textContent = "Awaiting input trigger...";
+          voiceStatus.textContent = "Thinking";
           clearAllStates();
         }
       };
@@ -420,13 +425,10 @@
         const textHeard = event.results[0][0].transcript;
         voiceStatus.textContent = `Heard: "${textHeard}"`;
         
-        setAIState('thinking');
         try { recognition.stop(); } catch(e){}
-
-        setTimeout(() => {
-          const systemAnswer = generateAIResponse(textHeard);
-          aiSpeak(systemAnswer);
-        }, 1200); 
+        
+        // Pass audio straight to the async Gemini logic
+        fetchGeminiResponse(textHeard); 
       };
 
       recognition.onerror = (event) => {
