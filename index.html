@@ -212,7 +212,6 @@
     }
   </style>
 
-  <!-- Import map for Google's ESM Gen AI library -->
   <script type="importmap">
     {
       "imports": {
@@ -245,17 +244,14 @@
     <div id="voiceStatus">Tap the glowing mic to start talking to TR</div>
     <div id="aiResponseText"></div>
     <div class="controls">
-      <!-- Added explicit call to setup global click events -->
       <button class="voice-btn" id="micBtn" onclick="toggleVoiceControl()" title="Talk to TR">🎙️</button>
     </div>
   </div>
 
-  <!-- Note the type="module" to allow ES6 library imports -->
   <script type="module">
     import { GoogleGenAI } from '@google/genai';
 
-    // Initialize client. 
-    // ⚠️ REPLACE THE STRIPPED PLACEHOLDER WITH A NEW, SECURE API KEY FROM GOOGLE STUDIO.
+    // ⚠️ CRITICAL REMINDER: Swap out this old compromised key for your freshly generated one!
     const ai = new GoogleGenAI({ apiKey: "AQ.Ab8RN6IAJTNfntIJdEVghsqiDKq9nIHjncEBtkF4Pv_GevNgTg" });
 
     const leftEye = document.getElementById('leftEye');
@@ -267,7 +263,8 @@
     let isListeningModeExplicit = false; 
     let naturalBlinkTimer = null;
 
-    // Window global hookups for the HTML inline onclick handler
+    // --- CRITICAL BROWSER FIX ---
+    // Connects the hidden module code directly to the browser window so your HTML button clicks find it!
     window.toggleVoiceControl = toggleVoiceControl;
 
     // --- State Handlers ---
