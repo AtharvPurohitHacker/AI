@@ -211,14 +211,6 @@
       box-shadow: 0 0 30px #00f2ff;
     }
   </style>
-
-  <script type="importmap">
-    {
-      "imports": {
-        "@google/genai": "https://esm.run/@google/genai"
-      }
-    }
-  </script>
 </head>
 <body>
 
@@ -248,12 +240,7 @@
     </div>
   </div>
 
-  <script type="module">
-    import { GoogleGenAI } from '@google/genai';
-
-    // ⚠️ CRITICAL REMINDER: Swap out this old compromised key for your freshly generated one!
-    const ai = new GoogleGenAI({ apiKey: "AQ.Ab8RN6IAJTNfntIJdEVghsqiDKq9nIHjncEBtkF4Pv_GevNgTg" });
-
+  <script>
     const leftEye = document.getElementById('leftEye');
     const rightEye = document.getElementById('rightEye');
     const micBtn = document.getElementById('micBtn');
@@ -262,10 +249,6 @@
 
     let isListeningModeExplicit = false; 
     let naturalBlinkTimer = null;
-
-    // --- CRITICAL BROWSER FIX ---
-    // Connects the hidden module code directly to the browser window so your HTML button clicks find it!
-    window.toggleVoiceControl = toggleVoiceControl;
 
     // --- State Handlers ---
     function clearAllStates() {
@@ -348,12 +331,12 @@
       window.speechSynthesis.speak(utterance);
     }
 
-    // --- New Cloud Brain Engine (Gemini 1.5 Flash Connected) ---
+    // --- Secure Vercel Route Brain Connected ---
     async function fetchGeminiResponse(userInput) {
       setAIState('thinking');
       voiceStatus.textContent = "TR is consulting the cloud matrix...";
 
-      // Quick offline keyword checks for hardware animations before passing to API
+      // Keep offline mechanical logic checks here on the front-end
       const query = userInput.toLowerCase().trim();
       if (query.includes("close") && query.includes("eye")) {
         setTimeout(closeEyes, 800);
@@ -371,22 +354,29 @@
         return;
       }
 
-      // If it's a structural conversation query, fetch from Gemini Cloud
+      // Talk to your Vercel serverless helper file (/api/chat.js)
       try {
-        const response = await ai.models.generateContent({
-          model: 'gemini-1.5-flash',
-          contents: userInput,
-          config: {
-            systemInstruction: "You are TR, a brilliant, friendly digital AI assistant operating behind a glowing neon optic grid. Keep your responses short, natural, and punchy (1-2 sentences maximum) so they sound great when read aloud.",
-            temperature: 0.7,
-          }
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: userInput })
         });
 
-        aiSpeak(response.text);
+        const data = await response.json();
+
+        if (data.text) {
+          aiSpeak(data.text);
+        } else if (data.error) {
+          console.error("Gemini Server Error:", data.error);
+          aiSpeak("My backend server returned an error.");
+          clearAllStates();
+        }
 
       } catch (error) {
-        console.error("Gemini API Error:", error);
-        aiSpeak("Connection to my cloud brain was disrupted. Please check my API key configuration.");
+        console.error("Vercel Fetch Error:", error);
+        aiSpeak("Connection to my cloud brain was disrupted.");
         clearAllStates();
       }
     }
@@ -424,7 +414,7 @@
         
         try { recognition.stop(); } catch(e){}
         
-        // Pass audio straight to the async Gemini logic
+        // Push speech to the Vercel async caller function
         fetchGeminiResponse(textHeard); 
       };
 
